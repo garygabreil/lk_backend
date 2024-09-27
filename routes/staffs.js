@@ -43,8 +43,12 @@ router.get("/getStaffByPID/:pid", async (req, res) => {
 });
 
 router.delete("/deleteStaffById/:id", async (req, res) => {
-  await Staff.findByIdAndDelete(req.params.id);
-  res.send({ message: "Staff deleted" });
+  try {
+    await Staff.findByIdAndDelete(req.params.id);
+    res.send({ message: "Staff deleted" });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = router;

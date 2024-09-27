@@ -4,6 +4,10 @@ const ItemSchema = new mongoose.Schema({
   medicineName: { type: String },
   price: { type: String },
   quantity: { type: String },
+  mrp: { type: String },
+  sgst: { type: String },
+  batch: { type: String },
+  expiryDate: { type: String },
   total: { type: String },
 });
 
@@ -27,6 +31,7 @@ const invoiceSchema = new mongoose.Schema({
   total: { type: String },
   invoiceID: { type: String },
   invoiceDate: { type: String },
+  gstAdded: { type: Boolean },
 });
 
 module.exports = mongoose.model("invoice-management", invoiceSchema);

@@ -3,42 +3,16 @@ const router = express.Router();
 const Patient = require("../model/patient");
 
 router.post("/create", async (req, res) => {
-  // const patient = new Patient(req.body);
-  // const existingPatient = await Patient.findOne({ name, age });
-  //await patient.save();
-  //res.send(patient);
   try {
-    const {
-      patientName,
-      patientPhoneNumber,
-      patientAddress,
-      fatherName,
-      title,
-      gender,
-      visitDate,
-      pid,
-      dob,
-      consultantName,
-      createdOn,
-      updatedOn,
-      createdBy,
-      updatedBy,
-      age,
-      type,
-      symptoms,
-      medicinesPrescribed,
-      remarks,
-      paymentType,
-      paymentStatus,
-      nextVisit,
-      bp,
-      sp02,
-      pulse,
-      sugar,
-      appointmentId,
-    } = req.body;
+    const { patientName, age } = req.body;
     // Check if a patient with the same name and age exists
-    const existingPatient = await Patient.findOne({ patientName, age });
+    const clearPatientName = patientName
+      ? patientName.replace(/\s+/g, "").toLowerCase()
+      : ""; // Default value if consultantName is null or undefined
+    const existingPatient = await Patient.findOne({
+      patientName: clearPatientName,
+      age: age,
+    });
 
     if (existingPatient) {
       return res
@@ -48,33 +22,8 @@ router.post("/create", async (req, res) => {
 
     // If patient doesn't exist, create a new one
     const newPatient = new Patient({
-      patientName,
-      patientPhoneNumber,
-      patientAddress,
-      fatherName,
-      title,
-      gender,
-      visitDate,
-      pid,
-      dob,
-      consultantName,
-      createdOn,
-      updatedOn,
-      createdBy,
-      updatedBy,
-      age,
-      type,
-      symptoms,
-      medicinesPrescribed,
-      remarks,
-      paymentType,
-      paymentStatus,
-      nextVisit,
-      bp,
-      sp02,
-      pulse,
-      sugar,
-      appointmentId,
+      ...req.body,
+      patientName: clearPatientName, // Save the cleaned name to the DB
     });
     await newPatient.save();
     res
@@ -87,8 +36,12 @@ router.post("/create", async (req, res) => {
 });
 
 router.get("/getAll", async (req, res) => {
-  const patient = await Patient.find();
-  res.send(patient);
+  try {
+    const patient = await Patient.find();
+    res.send(patient);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.get("/getName/:name", async (req, res) => {
@@ -109,21 +62,32 @@ router.get("/getName/:name", async (req, res) => {
 });
 
 router.get("/getPatientById/:id", async (req, res) => {
-  const patient = await Patient.findById(req.params.id);
-  res.send(patient);
+  try {
+    const patient = await Patient.findById(req.params.id);
+    res.send(patient);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.put("/updatePatientById/:id", async (req, res) => {
-  const patient = await Patient.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  res.send(patient);
+  try {
+    const patient = await Patient.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.send(patient);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.delete("/deletePatientById/:id", async (req, res) => {
-  console.log(req.params.id);
-  await Patient.findByIdAndDelete(req.params.id.trim());
-  res.send({ message: "Patient deleted" });
+  try {
+    await Patient.findByIdAndDelete(req.params.id.trim());
+    res.send({ message: "Patient deleted" });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = router;
