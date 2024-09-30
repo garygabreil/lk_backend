@@ -29,7 +29,7 @@ const invoiceSchema = new mongoose.Schema({
   grandTotalWithGST: { type: String },
   grandTotalWithOutGST: { type: String },
   total: { type: String },
-  invoiceID: { type: String },
+  invoiceID: { type: Number, unique: true },
   invoiceDate: { type: String },
   gstAdded: { type: Boolean },
 });

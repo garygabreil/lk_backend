@@ -76,20 +76,33 @@ router.get("/getAll", async (req, res) => {
   }
 });
 
-router.get("/getMedicine/:name", async (req, res) => {
+router.post("/getMedicine", async (req, res) => {
   try {
-    const searchTerm = req.params.name;
-    const regex = new RegExp(`.*${searchTerm}.*`, "i");
+    // Assuming req.body is an object, extract the searchTerm properly
+    const searchTerm = req.body.medicineName; // Make sure you're sending { searchTerm: 'your search term' }
+
+    // If no searchTerm is provided, return an error
+    if (!searchTerm || searchTerm.trim() === "") {
+      return res.status(400).json({ message: "Search term is required" });
+    }
+
+    // Use a regex to perform case-insensitive partial matching
+    const regex = new RegExp(searchTerm, "i"); // 'i' flag for case-insensitivity
+
+    // Find medicines that match the search term in their name
     const products = await Product.find({
       medicineName: { $regex: regex },
     });
-    if (products) {
+
+    // Check if products are found
+    if (products.length > 0) {
       res.send(products);
     } else {
-      res.status(409).json({ message: "not medicine", error });
+      res.status(404).json({ message: "No medicine found" });
     }
   } catch (err) {
-    res.send(err);
+    console.error(err); // Log error to server console
+    res.status(500).send({ message: "An error occurred", error: err });
   }
 });
 

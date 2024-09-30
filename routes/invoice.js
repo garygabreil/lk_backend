@@ -49,6 +49,15 @@ router.post("/create", async (req, res) => {
       invoiceData.invoiceDate = `${day}-${month}-${year}`; // Update the date format
     }
 
+    // Check if the invoice ID already exists
+    const existingInvoice = await Invoice.findOne({
+      invoiceID: invoiceData.invoiceID,
+    });
+
+    if (existingInvoice) {
+      return res.status(400).json({ message: "Invoice ID already exists." });
+    }
+
     // Create a new Invoice with the updated data
     const invoice = new Invoice(invoiceData);
 
