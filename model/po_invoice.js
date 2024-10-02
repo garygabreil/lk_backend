@@ -9,20 +9,14 @@ const ItemSchema = new mongoose.Schema({
   batch: { type: String },
   expiryDate: { type: String },
   total: { type: String },
+  mid: { type: String },
+  hsn_code: { type: String },
 });
 
-const invoiceSchema = new mongoose.Schema({
-  // billingInfo: { type: BillingInfoSchema },
-  // patientInfo: { type: PatientInfoSchema },
-  patientName: { type: String },
-  patientPhoneNumber: { type: String },
-  patientAddress: { type: String },
-  fatherName: { type: String },
-  title: { type: String },
-  gender: { type: String },
-  pid: { type: String },
-  age: { type: String },
-  consultantName: { type: String },
+const poInvoiceSchema = new mongoose.Schema({
+  supplierName: { type: String },
+  supplierPhoneNumber: { type: String },
+  supplierAddress: { type: String },
   paymentType: { type: String },
   paymentStatus: { type: String },
   items: { type: [ItemSchema] },
@@ -37,4 +31,4 @@ const invoiceSchema = new mongoose.Schema({
   updatedOn: { type: String },
 });
 
-module.exports = mongoose.model("invoice-management", invoiceSchema);
+module.exports = mongoose.model("po-invoice-management", poInvoiceSchema);

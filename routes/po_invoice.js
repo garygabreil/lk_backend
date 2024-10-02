@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Invoice = require("../model/invoice");
+const Invoice = require("../model/po_invoice");
 const Product = require("../model/product");
 
 // Get all invoices
@@ -79,8 +79,6 @@ router.put("/updateInvoiceById/:id", async (req, res) => {
   try {
     const invoiceId = req.params.id;
 
-    console.log(invoiceId);
-
     if (!invoiceId) {
       return res.status(400).json({ message: "Invoice ID is required." });
     }
@@ -139,7 +137,7 @@ router.put("/updateInvoiceById/:id", async (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
   const _id = req.params.id;
   try {
-    await Invoice.findByIdAndDelete(_id);
+    await Invoice.findByIdAndDelete({ _id: _id });
     res.json({ message: "Deleted Invoice" });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -211,7 +209,9 @@ router.get("/getQ/", async (req, res) => {
 });
 
 router.post("/searchInvoice", async (req, res) => {
-  const { paymentType, paymentStatus, patientName, invoiceDate } = req.body;
+  const { paymentType, paymentStatus, supplierName, invoiceDate } = req.body;
+
+  console.log(req.body);
 
   try {
     const searchCriteria = {};
@@ -227,8 +227,8 @@ router.post("/searchInvoice", async (req, res) => {
     }
 
     // Handle patientName search (case-insensitive, partial match)
-    if (patientName) {
-      searchCriteria.patientName = { $regex: patientName, $options: "i" };
+    if (supplierName) {
+      searchCriteria.supplierName = { $regex: supplierName, $options: "i" };
     }
 
     // Handle invoiceDate search (convert from dd-MM-yyyy to ISODate)

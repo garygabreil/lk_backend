@@ -18,20 +18,34 @@ router.post("/create", async (req, res) => {
       batch,
       priceOfOne,
       sgst,
+      supplierAddress,
+      supplierName,
+      supplierPhone,
     } = req.body;
 
     // Transform medicineName, batch, and hsn_code to uppercase
     const cleanMedicineName = medicineName
       ? medicineName.replace(/\s+/g, "_").toUpperCase()
       : "";
-    const cleanBatch = batch ? batch.toUpperCase() : "";
-    const cleanHsnCode = hsn_code ? hsn_code.toUpperCase() : "";
+    const cleanBatch = batch ? batch.replace(/\s+/g, "_").toUpperCase() : "";
+    const cleanHsnCode = hsn_code
+      ? hsn_code.replace(/\s+/g, "_").toUpperCase()
+      : "";
+
+    const cleanSupplierAddress = supplierAddress
+      ? supplierAddress.replace(/\s+/g, "_").toUpperCase()
+      : "";
+    const cleanSupplierName = supplierName
+      ? supplierName.replace(/\s+/g, "_").toUpperCase()
+      : "";
 
     // Check if a product with the same medicineName, batch, and hsn_code exists
     const existingProduct = await Product.findOne({
       medicineName: cleanMedicineName,
       batch: cleanBatch,
       hsn_code: cleanHsnCode,
+      supplierName: cleanSupplierName,
+      supplierAddress: cleanSupplierAddress,
     });
 
     if (existingProduct) {
@@ -55,6 +69,9 @@ router.post("/create", async (req, res) => {
       batch: cleanBatch,
       priceOfOne,
       sgst,
+      supplierName: cleanSupplierName,
+      supplierAddress: cleanSupplierAddress,
+      supplierPhone,
     });
 
     await newMedicine.save();
@@ -106,6 +123,96 @@ router.post("/getMedicine", async (req, res) => {
   }
 });
 
+router.post("/getSupplier", async (req, res) => {
+  try {
+    // Assuming req.body is an object, extract the searchTerm properly
+    const searchTerm = req.body.supplierName; // Make sure you're sending { searchTerm: 'your search term' }
+
+    // If no searchTerm is provided, return an error
+    if (!searchTerm || searchTerm.trim() === "") {
+      return res.status(400).json({ message: "Search term is required" });
+    }
+
+    // Use a regex to perform case-insensitive partial matching
+    const regex = new RegExp(searchTerm, "i"); // 'i' flag for case-insensitivity
+
+    // Find medicines that match the search term in their name
+    const products = await Product.find({
+      supplierName: { $regex: regex },
+    });
+
+    // Check if products are found
+    if (products.length > 0) {
+      res.send(products);
+    } else {
+      res.status(404).json({ message: "No medicine found" });
+    }
+  } catch (err) {
+    console.error(err); // Log error to server console
+    res.status(500).send({ message: "An error occurred", error: err });
+  }
+});
+
+router.post("/getHSNCode", async (req, res) => {
+  try {
+    // Assuming req.body is an object, extract the searchTerm properly
+    const searchTerm = req.body.hsn_code; // Make sure you're sending { searchTerm: 'your search term' }
+
+    // If no searchTerm is provided, return an error
+    if (!searchTerm || searchTerm.trim() === "") {
+      return res.status(400).json({ message: "Search term is required" });
+    }
+
+    // Use a regex to perform case-insensitive partial matching
+    const regex = new RegExp(searchTerm, "i"); // 'i' flag for case-insensitivity
+
+    // Find medicines that match the search term in their name
+    const products = await Product.find({
+      hsn_code: { $regex: regex },
+    });
+
+    // Check if products are found
+    if (products.length > 0) {
+      res.send(products);
+    } else {
+      res.status(404).json({ message: "No medicine found" });
+    }
+  } catch (err) {
+    console.error(err); // Log error to server console
+    res.status(500).send({ message: "An error occurred", error: err });
+  }
+});
+
+router.post("/getBatch", async (req, res) => {
+  try {
+    // Assuming req.body is an object, extract the searchTerm properly
+    const searchTerm = req.body.batch; // Make sure you're sending { searchTerm: 'your search term' }
+
+    // If no searchTerm is provided, return an error
+    if (!searchTerm || searchTerm.trim() === "") {
+      return res.status(400).json({ message: "Search term is required" });
+    }
+
+    // Use a regex to perform case-insensitive partial matching
+    const regex = new RegExp(searchTerm, "i"); // 'i' flag for case-insensitivity
+
+    // Find medicines that match the search term in their name
+    const products = await Product.find({
+      batch: { $regex: regex },
+    });
+
+    // Check if products are found
+    if (products.length > 0) {
+      res.send(products);
+    } else {
+      res.status(404).json({ message: "No medicine found" });
+    }
+  } catch (err) {
+    console.error(err); // Log error to server console
+    res.status(500).send({ message: "An error occurred", error: err });
+  }
+});
+
 router.get("/getProductById/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -132,14 +239,26 @@ router.put("/updateProductById/:id", async (req, res) => {
       batch,
       priceOfOne,
       sgst,
+      supplierName,
+      supplierAddress,
+      supplierPhone,
     } = req.body;
 
     // Transform medicineName, batch, and hsn_code to uppercase and replace spaces in medicineName
     const cleanMedicineName = medicineName
       ? medicineName.replace(/\s+/g, "_").toUpperCase()
       : "";
-    const cleanBatch = batch ? batch.toUpperCase() : "";
-    const cleanHsnCode = hsn_code ? hsn_code.toUpperCase() : "";
+    const cleanBatch = batch ? batch.replace(/\s+/g, "_").toUpperCase() : "";
+    const cleanHsnCode = hsn_code
+      ? hsn_code.replace(/\s+/g, "_").toUpperCase()
+      : "";
+
+    const cleanSupplierAddress = supplierAddress
+      ? supplierAddress.replace(/\s+/g, "_").toUpperCase()
+      : "";
+    const cleanSupplierName = supplierName
+      ? supplierName.replace(/\s+/g, "_").toUpperCase()
+      : "";
 
     // Update the product with the cleaned data
     const updatedMedicine = await Product.findByIdAndUpdate(
@@ -158,6 +277,9 @@ router.put("/updateProductById/:id", async (req, res) => {
         batch: cleanBatch,
         priceOfOne,
         sgst,
+        supplierName: cleanSupplierName,
+        supplierAddress: cleanSupplierAddress,
+        supplierPhone: supplierPhone,
       },
       { new: true } // Return the updated document
     );
@@ -236,7 +358,7 @@ router.post("/updateQ", async (req, res) => {
 router.post("/search", async (req, res) => {
   try {
     // Destructure the search query parameters from the request
-    const { medicineName, hsn_code, batch } = req.body;
+    const { medicineName, hsn_code, batch, supplierName } = req.body;
     // Build a search object dynamically based on provided query params
     let searchCriteria = {};
 
@@ -244,6 +366,14 @@ router.post("/search", async (req, res) => {
       // Search case-insensitive and replace spaces with underscores
       searchCriteria.medicineName = new RegExp(
         medicineName.replace(/\s+/g, "_"),
+        "i"
+      );
+    }
+
+    if (supplierName) {
+      // Search case-insensitive and replace spaces with underscores
+      searchCriteria.supplierName = new RegExp(
+        supplierName.replace(/\s+/g, "_"),
         "i"
       );
     }

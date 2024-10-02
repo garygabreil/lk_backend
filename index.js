@@ -35,6 +35,7 @@ const productsRoutes = require("./routes/product");
 const patientRoutes = require("./routes/patient");
 const doctorRoutes = require("./routes/doctors");
 const staffRoutes = require("./routes/staffs");
+const poInvoiceRoutes = require("./routes/po_invoice");
 
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/users", usersRoutes);
@@ -42,6 +43,7 @@ app.use("/api/product", productsRoutes);
 app.use("/api/patient", patientRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/staff", staffRoutes);
+app.use("/api/po/invoices", poInvoiceRoutes);
 
 // Handle errors
 app.use((err, req, res, next) => {

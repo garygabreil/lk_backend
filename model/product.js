@@ -12,6 +12,9 @@ const ProductSchema = new mongoose.Schema({
   createdBy: { type: String },
   updatedBy: { type: String },
   updatedOn: { type: String },
+  supplierName: { type: String },
+  supplierAddress: { type: String },
+  supplierPhone: { type: String },
   mid: { type: String },
 });
 
