@@ -42,7 +42,6 @@ router.post("/create", async (req, res) => {
   try {
     // Make a copy of the entire request body to preserve all fields
     let invoiceData = { ...req.body };
-    console.log(invoiceData);
 
     // If invoiceDate exists, convert it to "dd-MM-yyyy"
     if (invoiceData.invoiceDate) {
@@ -81,16 +80,16 @@ router.put("/updateInvoiceById/:id", async (req, res) => {
 
     console.log(invoiceId);
 
+    console.log(req.body);
+
     if (!invoiceId) {
       return res.status(400).json({ message: "Invoice ID is required." });
     }
-
     // Check if the invoice exists
     const existingInvoice = await Invoice.findById({ _id: invoiceId });
     if (!existingInvoice) {
       return res.status(404).json({ message: "Invoice not found." });
     }
-
     // Initialize updatedData
     let updatedData = {};
 

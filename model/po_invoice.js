@@ -9,6 +9,7 @@ const ItemSchema = new mongoose.Schema({
   batch: { type: String },
   expiryDate: { type: String },
   total: { type: String },
+  pack: { type: String },
   mid: { type: String },
   hsn_code: { type: String },
 });

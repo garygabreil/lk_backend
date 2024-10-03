@@ -7,8 +7,9 @@ router.post("/create", async (req, res) => {
     const { patientName, age } = req.body;
     // Check if a patient with the same name and age exists
     const clearPatientName = patientName
-      ? patientName.replace(/\s+/g, "").toLowerCase()
+      ? patientName.replace(/\s+/g, "").toUpperCase()
       : ""; // Default value if consultantName is null or undefined
+
     const existingPatient = await Patient.findOne({
       patientName: clearPatientName,
       age: age,

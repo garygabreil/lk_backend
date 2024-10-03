@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../model/product");
+const Supplier = require("../model/supplier");
 
 router.post("/create", async (req, res) => {
   try {
@@ -21,6 +22,7 @@ router.post("/create", async (req, res) => {
       supplierAddress,
       supplierName,
       supplierPhone,
+      pack,
     } = req.body;
 
     // Transform medicineName, batch, and hsn_code to uppercase
@@ -72,6 +74,7 @@ router.post("/create", async (req, res) => {
       supplierName: cleanSupplierName,
       supplierAddress: cleanSupplierAddress,
       supplierPhone,
+      pack,
     });
 
     await newMedicine.save();
@@ -242,6 +245,7 @@ router.put("/updateProductById/:id", async (req, res) => {
       supplierName,
       supplierAddress,
       supplierPhone,
+      pack,
     } = req.body;
 
     // Transform medicineName, batch, and hsn_code to uppercase and replace spaces in medicineName
@@ -280,6 +284,7 @@ router.put("/updateProductById/:id", async (req, res) => {
         supplierName: cleanSupplierName,
         supplierAddress: cleanSupplierAddress,
         supplierPhone: supplierPhone,
+        pack,
       },
       { new: true } // Return the updated document
     );
@@ -315,7 +320,6 @@ router.post("/updateQ", async (req, res) => {
     for (let med of medicinesToSubtract) {
       // Ensure mid exists
       if (!med.mid) {
-        console.log("Invalid or missing mid for medicine:", med);
         continue;
       }
 
@@ -324,9 +328,6 @@ router.post("/updateQ", async (req, res) => {
 
       // If parsing fails (NaN) or if quantity is less than or equal to zero, skip
       if (isNaN(quantityToSubtract)) {
-        console.log(
-          `Invalid quantity for medicine ${med.mid}: ${med.quantity}`
-        );
         continue; // Skip invalid medicines
       }
 
@@ -369,7 +370,6 @@ router.post("/search", async (req, res) => {
         "i"
       );
     }
-
     if (supplierName) {
       // Search case-insensitive and replace spaces with underscores
       searchCriteria.supplierName = new RegExp(
