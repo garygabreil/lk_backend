@@ -248,6 +248,21 @@ router.put("/updateProductById/:id", async (req, res) => {
       pack,
     } = req.body;
 
+    // Check if both `_id` and `mid` are provided
+    if (!id || !mid) {
+      return res.status(400).json({
+        message: "Both product ID and mid must be provided",
+      });
+    }
+
+    // Check for existing product with the same `mid` (excluding the current product)
+    const existingProduct = await Product.findOne({ mid, _id: { $ne: id } });
+    if (existingProduct) {
+      return res.status(400).json({
+        message: `A product with mid ${mid} already exists`,
+      });
+    }
+
     // Transform medicineName, batch, and hsn_code to uppercase and replace spaces in medicineName
     const cleanMedicineName = medicineName
       ? medicineName.replace(/\s+/g, "_").toUpperCase()
